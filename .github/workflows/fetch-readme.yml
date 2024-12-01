@@ -1,0 +1,57 @@
+name: Fetch README and Images
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * *'  # Run daily at midnight UTC
+  workflow_dispatch:     # Allow manual trigger
+
+jobs:
+  fetch-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Fetch README and Images
+        run: |
+          REPO_URL=$(node -p "require('./docs.config.json').repositoryURL")
+          OWNER=$(echo $REPO_URL | sed 's/https:\/\/github.com\///' | cut -d'/' -f1)
+          REPO=$(echo $REPO_URL | sed 's/https:\/\/github.com\///' | cut -d'/' -f2)
+          
+          mkdir -p public/readme-assets
+          
+          README_CONTENT=$(curl -H "Accept: application/vnd.github.v3.raw" \
+            "https://api.github.com/repos/$OWNER/$REPO/contents/README.md")
+          
+          echo "$README_CONTENT" > public/readme.md
+          
+          # This will match both ![alt](path) and <img src="path" /> patterns
+          IMAGE_PATHS=$(echo "$README_CONTENT" | grep -o -E '!\[.*?\]\((.*?)\)|<img.*?src="(.*?)"' | grep -o -E '(\([^)]*\)|src="[^"]*")' | tr -d '(")')
+          
+          for IMG_PATH in $IMAGE_PATHS; do
+            if [[ $IMG_PATH != http* ]]; then
+              IMG_PATH=${IMG_PATH#/}
+              
+              mkdir -p "public/readme-assets/$(dirname "$IMG_PATH")"
+              
+              curl -H "Accept: application/vnd.github.v3.raw" \
+                "https://raw.githubusercontent.com/$OWNER/$REPO/main/$IMG_PATH" \
+                --create-dirs -o "public/readme-assets/$IMG_PATH"
+              
+              # Update image path in README
+              sed -i "s|$IMG_PATH|/readme-assets/$IMG_PATH|g" public/readme.md
+            fi
+          done
+          
+      - name: Commit and push if changed
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git add public/readme.md public/readme-assets
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update README content and assets" && git push)

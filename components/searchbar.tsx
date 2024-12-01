@@ -74,7 +74,7 @@ export default function SearchBar() {
               <CommandItem
                 key={pkg.path}
                 onSelect={() =>
-                  runCommand(() => router.push("/docs" + pkg.path))
+                  runCommand(() => router.push("/docs/packages" + pkg.path))
                 }
                 className="capitalize !pointer-events-auto !opacity-80 !cursor-pointer"
               >
@@ -88,7 +88,7 @@ export default function SearchBar() {
               <CommandItem
                 key={mod.path}
                 onSelect={() =>
-                  runCommand(() => router.push("/docs" + mod.path))
+                  runCommand(() => router.push("/docs/packages" + mod.path))
                 }
                 className="capitalize !pointer-events-auto !opacity-80 !cursor-pointer"
               >

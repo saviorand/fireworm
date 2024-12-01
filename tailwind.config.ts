@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import type { PluginAPI } from "tailwindcss/types/config";
 
 const config = {
   darkMode: ["class"],
@@ -72,9 +73,92 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      typography: ({ theme }: PluginAPI) => ({
+        DEFAULT: {
+          css: {
+            'code::before': {
+              content: '""'
+            },
+            'code::after': {
+              content: '""'
+            },
+            'code': {
+              backgroundColor: theme('colors.gray.100'),
+              color: theme('colors.gray.900'),
+              padding: '0.25rem 0.375rem',
+              borderRadius: '0.25rem',
+              fontSize: '0.875em',
+              fontWeight: '500'
+            },
+            'pre': {
+              backgroundColor: 'transparent',
+              padding: 0,
+              marginTop: '1.5em',
+              marginBottom: '1.5em',
+              borderRadius: '0.375rem',
+              overflow: 'hidden'
+            },
+            'pre code': {
+              backgroundColor: 'transparent',
+              padding: 0,
+              fontSize: '0.875em',
+              lineHeight: '1.7142857'
+            },
+            'a': {
+              color: theme('colors.blue.600'),
+              textDecoration: 'none',
+              '&:hover': {
+                textDecoration: 'underline'
+              }
+            },
+            'img': {
+              borderRadius: '0.375rem',
+              margin: '0',
+              display: 'inline-block',
+            },
+            'p': {
+              '& img': {
+                display: 'inline-block',
+                margin: '0 4px',
+                verticalAlign: 'middle',
+              },
+              '&:has(img:only-child)': {
+                marginTop: '0.5em',
+                marginBottom: '0.5em',
+              }
+            },
+          },
+        },
+        dark: {
+          css: {
+            color: theme('colors.gray.300'),
+            'a': {
+              color: theme('colors.blue.400'),
+            },
+            'pre code': {
+              backgroundColor: 'transparent',
+              color: theme('colors.gray.200'),
+            },
+            'code': {
+              backgroundColor: theme('colors.gray.800'),
+              color: theme('colors.gray.200'),
+              border: `1px solid ${theme('colors.gray.700')}`,
+            },
+            'h1, h2, h3, h4': {
+              color: theme('colors.gray.100'),
+            },
+            'strong': {
+              color: theme('colors.gray.100'),
+            }
+          }
+        }
+      })
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require('@tailwindcss/typography'),
+    require("tailwindcss-animate")
+  ],
 } satisfies Config;
 
 export default config;

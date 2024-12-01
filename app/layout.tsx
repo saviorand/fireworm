@@ -3,14 +3,14 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Navbar from "@/components/navbar";
+import docsConfig from '@/docs.config.json';
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Basalt Docs",
-  description:
-    "Public documentation for the Basalt machine learning framework.",
-};
+  title: `${docsConfig.projectName} Docs`,
+  description: docsConfig.description,
+}
 
 export default function RootLayout({
   children,
