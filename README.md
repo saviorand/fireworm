@@ -63,8 +63,8 @@ MojoDocs is a NextJS application, so you can deploy it on [Vercel](https://verce
 ## Contributors
 Want your name to show up here? See [CONTRIBUTING.md](./CONTRIBUTING.md)!
 
-<a href="https://github.com/saviorand/lightbug_api/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=saviorand/lightbug_api" />
+<a href="https://github.com/saviorand/lightbug_docs/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=saviorand/lightbug_docs" />
 </a>
 
 <sub>Made with [contrib.rocks](https://contrib.rocks).</sub>
