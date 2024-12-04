@@ -28,15 +28,6 @@ function GitHubLink() {
   );
 }
 
-function DocsLink() {
-  return (
-    <Link href="/docs" className="flex items-center gap-2 rounded-md p-2.5 mx-2 text-sm font-medium transition-colors hover:bg-gray-200 dark:hover:bg-gray-700">
-      <Book className="h-5 w-5" />
-      <span className="hidden md:inline">Docs</span>
-    </Link>
-  );
-}
-
 function PackagesLink() {
   return (
     <Link href="/docs/packages" className="flex items-center gap-2 rounded-md p-2.5 mx-2 text-sm font-medium transition-colors hover:bg-gray-200 dark:hover:bg-gray-700">
@@ -52,7 +43,6 @@ export default function Navbar() {
       <div className="container flex h-16 items-center justify-between px-4 md:px-6">
         <Logo />
         <div className="flex items-center gap-2">
-          <DocsLink />
           <PackagesLink />
           <GitHubLink />
           <SearchBar />

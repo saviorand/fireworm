@@ -1,8 +1,37 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<a name="readme-top"></a>
 
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+    <img src="static/logo.png" alt="Logo" width="250" height="250">
+
+  <h3 align="center">MojoDocs</h3>
+
+  <p align="center">
+    🔥 Docs for your Mojo projects 🔥
+    <br/>
+
+   ![Written in Mojo][language-shield]
+   [![MIT License][license-shield]][license-url]
+   [![Contributors Welcome][contributors-shield]][contributors-url]
+   [![Join our Discord][discord-shield]][discord-url]
+   
+
+  </p>
+</div>
+
+## Overview
+
+MojoDocs lets you make a documentation website for your Mojo project.
+
+Just run the `mojo doc` command on your codebase, add the resulting JSON to the project and start the server. Now you can proudly say you have public documentation! 🔥
+
+<!-- GETTING STARTED -->
 ## Getting Started
 
-First, run the development server:
+First, copy the output of `mojo doc` to a `docs.json` file at the root of this repo.
+
+Then, run the development server:
 
 ```bash
 npm run dev
@@ -18,19 +47,25 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+MojoDocs is a NextJS application, so you can deploy it on [Vercel](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) or any other place you can host Next apps.
 
-## Learn More
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[language-shield]: https://img.shields.io/badge/language-mojo-orange
+[license-shield]: https://img.shields.io/github/license/saviorand/lightbug_http?logo=github
+[license-url]: https://github.com/saviorand/lightbug_http/blob/main/LICENSE
+[contributors-shield]: https://img.shields.io/badge/contributors-welcome!-blue
+[contributors-url]: https://github.com/saviorand/lightbug_http#contributing
+[discord-shield]: https://img.shields.io/discord/1192127090271719495?style=flat&logo=discord&logoColor=white
+[discord-url]: https://discord.gg/VFWETkTgrr
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contributors
+Want your name to show up here? See [CONTRIBUTING.md](./CONTRIBUTING.md)!
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+<a href="https://github.com/saviorand/lightbug_api/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=saviorand/lightbug_api" />
+</a>
 
-## Deploy on Vercel
+<sub>Made with [contrib.rocks](https://contrib.rocks).</sub>
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
