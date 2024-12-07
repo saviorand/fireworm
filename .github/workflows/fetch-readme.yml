@@ -4,8 +4,9 @@ on:
   push:
     branches: [ main ]
   schedule:
-    - cron: '0 0 * * *'  # Run daily at midnight UTC
-  workflow_dispatch:     # Allow manual trigger
+    - cron: '0 0 * * *'  # Daily at midnight UTC
+  workflow_dispatch:
+
 
 jobs:
   fetch-readme:
@@ -31,23 +32,54 @@ jobs:
           
           echo "$README_CONTENT" > public/readme.md
           
-          # This will match both ![alt](path) and <img src="path" /> patterns
-          IMAGE_PATHS=$(echo "$README_CONTENT" | grep -o -E '!\[.*?\]\((.*?)\)|<img.*?src="(.*?)"' | grep -o -E '(\([^)]*\)|src="[^"]*")' | tr -d '(")')
+          TEMP_README=$(mktemp)
+          echo "$README_CONTENT" > "$TEMP_README"
           
-          for IMG_PATH in $IMAGE_PATHS; do
-            if [[ $IMG_PATH != http* ]]; then
-              IMG_PATH=${IMG_PATH#/}
-              
-              mkdir -p "public/readme-assets/$(dirname "$IMG_PATH")"
-              
-              curl -H "Accept: application/vnd.github.v3.raw" \
-                "https://raw.githubusercontent.com/$OWNER/$REPO/main/$IMG_PATH" \
-                --create-dirs -o "public/readme-assets/$IMG_PATH"
-              
-              # Update image path in README
-              sed -i "s|$IMG_PATH|/readme-assets/$IMG_PATH|g" public/readme.md
+          # Process markdown image syntax ![alt](path)
+          while IFS= read -r line; do
+            if [[ $line =~ !\[.*\]\((.*?)\) ]]; then
+              IMG_PATH="${BASH_REMATCH[1]}"
+              if [[ $IMG_PATH != http* ]]; then
+                # Remove leading slash if present
+                IMG_PATH=${IMG_PATH#/}
+                mkdir -p "public/readme-assets/$(dirname "$IMG_PATH")"
+                
+                curl -H "Accept: application/vnd.github.v3.raw" \
+                  "https://raw.githubusercontent.com/$OWNER/$REPO/main/$IMG_PATH" \
+                  --create-dirs -o "public/readme-assets/$IMG_PATH"
+                
+                # Replace the path in the line
+                line=${line//$IMG_PATH/\/readme-assets\/$IMG_PATH}
+              fi
             fi
-          done
+            echo "$line" >> "$TEMP_README.new"
+          done < "$TEMP_README"
+          
+          mv "$TEMP_README.new" "$TEMP_README"
+          
+          # Process HTML image syntax <img src="path" />
+          while IFS= read -r line; do
+            if [[ $line =~ \<img.*src=\"([^\"]+)\" ]]; then
+              IMG_PATH="${BASH_REMATCH[1]}"
+              if [[ $IMG_PATH != http* ]]; then
+                # Remove leading slash if present
+                IMG_PATH=${IMG_PATH#/}
+                mkdir -p "public/readme-assets/$(dirname "$IMG_PATH")"
+                
+                curl -H "Accept: application/vnd.github.v3.raw" \
+                  "https://raw.githubusercontent.com/$OWNER/$REPO/main/$IMG_PATH" \
+                  --create-dirs -o "public/readme-assets/$IMG_PATH"
+                
+                # Replace the path in the line
+                line=${line//$IMG_PATH/\/readme-assets\/$IMG_PATH}
+              fi
+            fi
+            echo "$line" >> "$TEMP_README.new"
+          done < "$TEMP_README"
+          
+          mv "$TEMP_README.new" public/readme.md
+          
+          rm "$TEMP_README"
           
       - name: Commit and push if changed
         run: |

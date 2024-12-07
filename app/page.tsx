@@ -7,6 +7,7 @@ import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import * as emoji from 'node-emoji'
 import fs from 'fs';
 import path from 'path';
+import Image from 'next/image';
 
 export default async function Home() {
   const readmePath = path.join(process.cwd(), 'public', 'readme.md');
@@ -49,8 +50,46 @@ export default async function Home() {
                   {children}
                 </code>
               )
+            },
+            img: ({ src, alt, width, height, ...props }) => {
+              if (!src) return null;
+              const isExternal = src.startsWith('http');
+              const imageSrc = isExternal ? src : `/readme-assets/${src}`;
+
+              const imageWidth = width ? parseInt(width as string, 10) : 
+                (isExternal ? 100 : 800); // smaller default for badges/shields
+              const imageHeight = height ? parseInt(height as string, 10) : 
+                (isExternal ? 30 : 600);
+            
+              if (isExternal) {
+                return (
+                  <img
+                    src={src}
+                    alt={alt || ''}
+                    width={imageWidth}
+                    height={imageHeight}
+                    className="inline-block"
+                    {...props}
+                  />
+                );
+              }
+            
+              return (
+                <div className="relative w-full h-full min-h-[200px]">
+                  <Image
+                    src={imageSrc}
+                    alt={alt || ''}
+                    width={imageWidth}
+                    height={imageHeight}
+                    className="object-contain"
+                    priority
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    {...props}
+                  />
+                </div>
+              );
             }
-          }}
+            }}
         >
           {contentWithEmojis}
         </ReactMarkdown>
