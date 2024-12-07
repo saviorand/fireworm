@@ -48,15 +48,15 @@ jobs:
                   "https://raw.githubusercontent.com/$OWNER/$REPO/main/$IMG_PATH" \
                   --create-dirs -o "public/readme-assets/$IMG_PATH"
                 
-                # Replace the path in the line
-                line=${line//$IMG_PATH/\/readme-assets\/$IMG_PATH}
+                # Don't modify the path in the markdown
+                line=${line//$IMG_PATH/$IMG_PATH}
               fi
             fi
             echo "$line" >> "$TEMP_README.new"
           done < "$TEMP_README"
-          
+
           mv "$TEMP_README.new" "$TEMP_README"
-          
+
           # Process HTML image syntax <img src="path" />
           while IFS= read -r line; do
             if [[ $line =~ \<img.*src=\"([^\"]+)\" ]]; then
@@ -70,8 +70,8 @@ jobs:
                   "https://raw.githubusercontent.com/$OWNER/$REPO/main/$IMG_PATH" \
                   --create-dirs -o "public/readme-assets/$IMG_PATH"
                 
-                # Replace the path in the line
-                line=${line//$IMG_PATH/\/readme-assets\/$IMG_PATH}
+                # Don't modify the path in the markdown
+                line=${line//$IMG_PATH/$IMG_PATH}
               fi
             fi
             echo "$line" >> "$TEMP_README.new"
