@@ -3,7 +3,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-    <img src="static/logo.png" alt="Logo" width="250" height="250">
+    <img src="/readme-assets/static/logo.png" alt="Logo" width="250" height="250">
 
   <h3 align="center">Lightbug</h3>
 
@@ -247,7 +247,7 @@ Note: as of September, 2024, `PythonServer` and `PythonClient` throw a compilati
 ## Roadmap
 
 <div align="center">
-    <img src="static/roadmap.png" alt="Logo" width="695" height="226">
+    <img src="/readme-assets/static/roadmap.png" alt="Logo" width="695" height="226">
 </div>
 
 We're working on support for the following (contributors welcome!):
