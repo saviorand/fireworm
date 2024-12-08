@@ -174,7 +174,8 @@ export default function PackagePage({ params }: PageParams) {
                             {items.functions.map((fn) => (
                               <div
                                 key={fn.name}
-                                className="p-4 bg-muted rounded-lg w-full"
+                                id={`${modName}-${fn.name}`}
+                                className="p-4 bg-muted rounded-lg w-full scroll-mt-24"
                               >
                                 <Link
                                   href={`/docs/packages/${pkg.name}/modules/${modName}#${fn.name}`}
@@ -204,7 +205,11 @@ export default function PackagePage({ params }: PageParams) {
                           <h4 className="text-lg font-semibold mb-4">Types</h4>
                           <div className="grid gap-4">
                             {items.types.map((type) => (
-                              <div key={type.name}>
+                              <div
+                                key={type.name}
+                                id={`${modName}-${type.name}`}
+                                className="scroll-mt-24"
+                              >
                                 <div className="p-6 bg-muted rounded-lg border border-muted-foreground/20">
                                   <div className="flex items-start justify-between gap-4 mb-4">
                                     <div>

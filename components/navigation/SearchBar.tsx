@@ -13,7 +13,7 @@ import {
   CommandGroup,
   CommandItem,
   CommandSeparator,
-} from "@/components/ui/Command";
+} from "@/components/ui/command";
 import { Button } from "../ui/Button";
 import { useRouter } from "next/navigation";
 
