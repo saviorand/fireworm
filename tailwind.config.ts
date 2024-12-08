@@ -105,7 +105,7 @@ const config = {
               lineHeight: '1.7142857'
             },
             'a': {
-              color: theme('colors.blue.600'),
+              color: theme('colors.orange.500'),
               textDecoration: 'none',
               '&:hover': {
                 textDecoration: 'underline'

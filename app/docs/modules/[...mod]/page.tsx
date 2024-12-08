@@ -1,18 +1,32 @@
 import { useMemo } from "react";
-import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import LayoutWithSidebar from "@/components/layout-with-sidebar";
-import { findPackage, collectModuleItems, getAllPackages } from "@/lib/docs";
-import TableOfContents from "@/components/table-of-contents";
-import ItemSection from "@/components/item-section";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+} from "@/components/ui/Breadcrumb";
+import LayoutWithSidebar from "@/components/navigation/LayoutWithSidebar";
+import { collectModuleItems, getAllPackages } from "@/lib/docs";
+import TableOfContents from "@/components/TableOfContents";
+import ItemSection from "@/components/ItemSection";
+import Link from "next/link";
 
 export default function ModulePage({ params }: { params: { mod: string[] } }) {
   const moduleName = params.mod[params.mod.length - 1];
-  const packageName = params.mod[0];
-  
-  const Crumbs = useMemo(() => {
-    const generateHref = (index: number) =>
-      `/docs/${params.mod.slice(0, index + 1).join("/")}`;
 
+  const { pkg, module } = useMemo(() => {
+    const packages = getAllPackages();
+    for (const { package: pkg } of packages) {
+      const module = pkg.modules?.find((m) => m.name === moduleName);
+      if (module) {
+        return { pkg, module };
+      }
+    }
+    return { pkg: null, module: null };
+  }, [moduleName]);
+
+  const Crumbs = useMemo(() => {
     return (
       <Breadcrumb className="text-primary font-semibold p-4">
         <BreadcrumbList>
@@ -21,31 +35,47 @@ export default function ModulePage({ params }: { params: { mod: string[] } }) {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink href="/docs/packages">Modules</BreadcrumbLink>
+            <BreadcrumbLink href="/docs/packages">Packages</BreadcrumbLink>
           </BreadcrumbItem>
+          {pkg && pkg.name !== "Default" && (
+            <>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink href={`/docs/packages/${pkg.name}`}>
+                  {pkg.name}
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+            </>
+          )}
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink href={`/docs/modules/${moduleName}`}>
-              {packageName}
+              {moduleName}
             </BreadcrumbLink>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
     );
-  }, [params.mod, packageName, moduleName]);
+  }, [moduleName, pkg]);
 
-  const pkg = findPackage([packageName]);
-  if (!pkg) return <div>Package not found</div>;
-
-  const module = pkg.modules?.find(m => m.name === moduleName);
-  if (!module) return <div>Module not found</div>;
+  if (!pkg || !module) return <div>Module not found</div>;
 
   const items = collectModuleItems(module);
 
   return (
     <LayoutWithSidebar pkg={pkg} module={module} crumbs={Crumbs}>
       <section id="overview" className="mb-12">
-        <h1 className="text-3xl font-bold mb-4">{module.name}</h1>
+        <div className="flex items-baseline gap-4 mb-4">
+          <h1 className="text-3xl font-bold">{module.name}</h1>
+          {pkg.name !== "Default" && (
+            <Link
+              href={`/docs/packages/${pkg.name}`}
+              className="text-sm text-muted-foreground hover:text-primary"
+            >
+              {pkg.name} package
+            </Link>
+          )}
+        </div>
         {module.description && (
           <p className="text-lg mb-8">{module.description}</p>
         )}
@@ -63,9 +93,11 @@ export async function generateStaticParams() {
   const packages = getAllPackages();
   const paths: { mod: string[] }[] = [];
 
+  // Collect all modules from all packages
   packages.forEach(({ package: pkg }) => {
-    pkg.modules?.forEach(module => {
-      paths.push({ mod: [pkg.name, module.name] });
+    pkg.modules?.forEach((module) => {
+      // All modules go under /docs/modules/[moduleName]
+      paths.push({ mod: [module.name] });
     });
   });
 

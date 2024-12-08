@@ -138,6 +138,17 @@ export type AliasWithModule = Alias & {
   module: string;
 };
 
+export type ModuleItems = {
+  functions: FunctionWithModule[];
+  types: StructWithModule[];
+  constants: AliasWithModule[];
+  variables: AliasWithModule[];
+};
+
+export function isModule(item: Package | Module): item is Module {
+  return "functions" in item;
+}
+
 export function getAllPackages(): IndexedPackage[] {
   const packages: IndexedPackage[] = [];
   let defaultPackage: IndexedPackage | null = null;
@@ -158,10 +169,11 @@ export function getAllPackages(): IndexedPackage[] {
         name: "Default",
         kind: "package",
         description: "Default package containing top-level modules",
-        summary: "Contains all modules not explicitly placed in a named package",
-        modules: Docs.decl.modules
+        summary:
+          "Contains all modules not explicitly placed in a named package",
+        modules: Docs.decl.modules,
       },
-      path: "/Default"
+      path: "/Default",
     };
   }
 
@@ -208,13 +220,16 @@ export function findPackage(
     return currentPackage;
   }
 
-  if (pkg.length === 1 && !currentPackage.packages?.find((p) => p.name === pkg[0])) {
+  if (
+    pkg.length === 1 &&
+    !currentPackage.packages?.find((p) => p.name === pkg[0])
+  ) {
     return {
       name: "Default",
       kind: "package",
       description: "Default package containing top-level modules",
       summary: "Contains all modules not explicitly placed in a named package",
-      modules: Docs.decl.modules || []
+      modules: Docs.decl.modules || [],
     };
   }
 
@@ -235,11 +250,13 @@ export const collectModuleItems = (module: Module): ModuleItems => {
   };
 
   module.functions?.forEach((fn) =>
-    items.functions.push({ ...fn, module: module.name }));
+    items.functions.push({ ...fn, module: module.name }),
+  );
   module.structs?.forEach((struct) =>
-    items.types.push({ ...struct, module: module.name }));
+    items.types.push({ ...struct, module: module.name }),
+  );
   module.aliases?.forEach((alias) => {
-    if (alias.value?.includes('const')) {
+    if (alias.value?.includes("const")) {
       items.constants.push({ ...alias, module: module.name });
     } else {
       items.variables.push({ ...alias, module: module.name });
@@ -247,13 +264,6 @@ export const collectModuleItems = (module: Module): ModuleItems => {
   });
 
   return items;
-};
-
-export type ModuleItems = {
-  functions: FunctionWithModule[];
-  types: StructWithModule[];
-  constants: AliasWithModule[];
-  variables: AliasWithModule[];
 };
 
 export const sortModuleItems = (a: ModuleItems, b: ModuleItems) => {
@@ -266,5 +276,150 @@ export const sortModuleItems = (a: ModuleItems, b: ModuleItems) => {
 
   return getTotal(a) - getTotal(b);
 };
+
+export function collectAllItems(packages: any[]) {
+  const allItems = new Map<
+    string,
+    {
+      constants: any[];
+      variables: any[];
+      functions: any[];
+      types: any[];
+      description: string;
+      moduleItems?: Map<
+        string,
+        {
+          constants: any[];
+          variables: any[];
+          functions: any[];
+          types: any[];
+          description: string;
+        }
+      >;
+    }
+  >();
+
+  packages.forEach((pkgData) => {
+    const pkg = pkgData.package;
+    const items = {
+      constants: [] as any[],
+      variables: [] as any[],
+      functions: [] as any[],
+      types: [] as any[],
+      description: pkg.description || "",
+      moduleItems: new Map() as
+        | Map<
+            string,
+            {
+              constants: any[];
+              variables: any[];
+              functions: any[];
+              types: any[];
+              description: string;
+            }
+          >
+        | undefined, // Create moduleItems for all packages
+    };
+
+    // Handle package-level items first
+    pkg.functions?.forEach((fn: any) => {
+      items.functions.push({
+        name: fn.name,
+        type: "function",
+        description: fn.overloads?.[0]?.description || "",
+      });
+    });
+
+    pkg.structs?.forEach((struct: any) => {
+      items.types.push({
+        name: struct.name,
+        type: "struct",
+        description: struct.description || "",
+      });
+    });
+
+    pkg.aliases?.forEach((alias: any) => {
+      if (alias.value?.includes("const")) {
+        items.constants.push({
+          name: alias.name,
+          type: "const",
+          description: alias.description || "",
+        });
+      } else {
+        items.variables.push({
+          name: alias.name,
+          type: "var",
+          description: alias.description || "",
+        });
+      }
+    });
+
+    // Handle module items
+    pkg.modules?.forEach((module: any) => {
+      const moduleItems = {
+        constants: [] as any[],
+        variables: [] as any[],
+        functions: [] as any[],
+        types: [] as any[],
+        description: module.description || "",
+      };
+
+      module.functions?.forEach((fn: any) => {
+        moduleItems.functions.push({
+          name: fn.name,
+          module: module.name,
+          type: "function",
+          description: fn.overloads?.[0]?.description || "",
+        });
+      });
+
+      module.structs?.forEach((struct: any) => {
+        moduleItems.types.push({
+          name: struct.name,
+          module: module.name,
+          type: "struct",
+          description: struct.description || "",
+        });
+      });
+
+      module.aliases?.forEach((alias: any) => {
+        if (alias.value?.includes("const")) {
+          moduleItems.constants.push({
+            name: alias.name,
+            module: module.name,
+            type: "const",
+            description: alias.description || "",
+          });
+        } else {
+          moduleItems.variables.push({
+            name: alias.name,
+            module: module.name,
+            type: "var",
+            description: alias.description || "",
+          });
+        }
+      });
+
+      // Only add module if it has any items
+      if (
+        moduleItems.functions.length > 0 ||
+        moduleItems.types.length > 0 ||
+        moduleItems.constants.length > 0 ||
+        moduleItems.variables.length > 0
+      ) {
+        items.moduleItems?.set(module.name, moduleItems);
+      }
+    });
+
+    // If no modules have items, remove the moduleItems map
+    if (items.moduleItems?.size === 0) {
+      delete items.moduleItems;
+    }
+
+    allItems.set(pkg.name, items);
+  });
+
+  return allItems;
+}
 
 export default Docs;

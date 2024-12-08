@@ -1,9 +1,8 @@
 {
-    "projectName": "Lightbug",
-    "description": "Simple and fast HTTP framework for Mojo! 🔥",
-    "longDescription": "Lightbug is a simple and sweet HTTP framework for Mojo that builds on best practice from systems programming",
-    "repositoryURL": "https://github.com/saviorand/lightbug_http",
-    "logoPath": "/logo.png",
-    "welcomeMessage": "Welcome to Lightbug! 🔥"
-  }
-  
+  "projectName": "Lightbug",
+  "description": "Simple and fast HTTP framework for Mojo! 🔥",
+  "longDescription": "Simple and sweet Mojo HTTP framework",
+  "repositoryURL": "https://github.com/saviorand/lightbug_http",
+  "logoPath": "/logo.png",
+  "welcomeMessage": "Welcome to Lightbug! 🔥"
+}

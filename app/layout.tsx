@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import Navbar from "@/components/navbar";
-import docsConfig from '@/docs.config.json';
+import { ThemeProvider } from "@/components/ThemeProvider";
+import Navbar from "@/components/navigation/NavBar";
+import docsConfig from "@/docs.config.json";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: `${docsConfig.projectName} Docs`,
   description: docsConfig.description,
-}
+};
 
 export default function RootLayout({
   children,
