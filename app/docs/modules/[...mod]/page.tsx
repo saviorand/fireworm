@@ -93,10 +93,8 @@ export async function generateStaticParams() {
   const packages = getAllPackages();
   const paths: { mod: string[] }[] = [];
 
-  // Collect all modules from all packages
   packages.forEach(({ package: pkg }) => {
     pkg.modules?.forEach((module) => {
-      // All modules go under /docs/modules/[moduleName]
       paths.push({ mod: [module.name] });
     });
   });
