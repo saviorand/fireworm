@@ -5,7 +5,7 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbSeparator,
-} from "@/components/ui/Breadcrumb";
+} from "@/components/ui/breadcrumb";
 import LayoutWithSidebar from "@/components/navigation/LayoutWithSidebar";
 import { collectModuleItems, getAllPackages } from "@/lib/docs";
 import TableOfContents from "@/components/TableOfContents";

@@ -14,7 +14,7 @@ import {
   CommandItem,
   CommandSeparator,
 } from "@/components/ui/command";
-import { Button } from "../ui/Button";
+import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 
 export default function SearchBar() {

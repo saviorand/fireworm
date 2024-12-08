@@ -5,7 +5,7 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from "@/components/ui/Breadcrumb";
+} from "@/components/ui/breadcrumb";
 import { findPackage, getAllPackages } from "@/lib/docs";
 import ModuleView from "@/components/views/ModuleView";
 import PackageView from "@/components/views/PackageView";
