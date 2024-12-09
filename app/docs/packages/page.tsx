@@ -54,8 +54,9 @@ function PackageCard({
   items: PackageData;
 }) {
   const basePath =
-    pkgName === "Default" ? "/docs/modules" : `/docs/packages/${pkgName}`;
-  const isClickable = pkgName !== "Default";
+    pkgName === "Default"
+      ? "/docs/packages/default"
+      : `/docs/packages/${pkgName}`;
 
   return (
     <section className="bg-card rounded-lg border shadow-sm">
@@ -63,14 +64,12 @@ function PackageCard({
         <div className="relative">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold tracking-tight">{pkgName}</h2>
-            {isClickable && (
-              <Link
-                href={`/docs/packages/${pkgName}`}
-                className="text-sm text-muted-foreground hover:text-primary"
-              >
-                View Details →
-              </Link>
-            )}
+            <Link
+              href={`/docs/packages/${pkgName}`}
+              className="text-sm text-muted-foreground hover:text-primary"
+            >
+              View Details →
+            </Link>
           </div>
           <p className="mt-2 text-muted-foreground">{items.description}</p>
         </div>
@@ -200,9 +199,6 @@ function sortModules(moduleEntries: [string, ModuleItems][]) {
     if (!aHasLargeSection && bHasLargeSection) return -1;
 
     // If both have large sections or neither has, sort alphabetically
-    // return nameA.localeCompare(nameB);
-
-    // just return as is
-    return 0;
+    return nameA.localeCompare(nameB);
   });
 }

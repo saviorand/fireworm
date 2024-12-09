@@ -1,6 +1,6 @@
 "use client";
 
-import { Struct, Field, Parameter, Alias } from "@/lib/docs";
+import { Struct, Field, Function } from "@/lib/docs";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import {
@@ -11,8 +11,10 @@ import {
 } from "../ui/accordion";
 import { Badge } from "../ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import Link from "next/link";
-import FunctionCard from "./FunctionCard";
+import FunctionView from "../views/FunctionView";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import { Cuboid } from "lucide-react";
 
 interface StructCardProps {
   struct: Struct;
@@ -43,7 +45,7 @@ const FieldRow = ({ field }: FieldProps) => (
 );
 
 const getFieldsPreview = (fields: Field[]) => {
-  const previewCount = 3;
+  const previewCount = 10;
   const hasMore = fields.length > previewCount;
   return {
     preview: fields.slice(0, previewCount),
@@ -52,143 +54,182 @@ const getFieldsPreview = (fields: Field[]) => {
 };
 
 export default function StructCard({ struct, pkg, modName }: StructCardProps) {
-  const fieldsPreview = struct.fields ? getFieldsPreview(struct.fields) : null;
+  const fieldsPreview =
+    struct.fields && struct.fields.length > 0
+      ? getFieldsPreview(struct.fields)
+      : null;
+
+  const [isMainDialogOpen, setIsMainDialogOpen] = useState(false);
+  const [selectedFunction, setSelectedFunction] = useState<Function | null>(
+    null,
+  );
+  const handleDialogOpenChange = (open: boolean) => {
+    setIsMainDialogOpen(open);
+    if (!open) {
+      setSelectedFunction(null);
+    }
+  };
 
   return (
-    <Card
-      className="w-full hover:shadow-md transition-shadow scroll-mt-20"
-      id={`${modName}-${struct.name}`}
-    >
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Link
-              href={`/docs/packages/${pkg}/modules/${modName}#${struct.name}`}
-              className="font-mono text-lg font-medium hover:text-primary break-words"
-            >
-              {struct.name}
-            </Link>
-            {struct.deprecated && (
-              <Badge variant="destructive" className="text-xs">
-                Deprecated
-              </Badge>
-            )}
-          </div>
-          <Dialog>
-            <DialogTrigger className="text-sm text-muted-foreground hover:text-primary px-3 py-1 rounded-md hover:bg-muted">
-              View Details
-            </DialogTrigger>
-            <StructDetailsContent struct={struct} pkg={pkg} modName={modName} />
-          </Dialog>
-        </CardTitle>
-        {struct.summary && (
-          <p className="text-sm text-muted-foreground">{struct.summary}</p>
-        )}
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-6">
-          {/* Quick Info Section */}
-          {struct.parentTraits && struct.parentTraits.length > 0 && (
-            <div className="text-sm text-muted-foreground">
-              <span className="font-medium">Implements:</span>{" "}
-              <span className="text-primary">
-                {struct.parentTraits.join(", ")}
-              </span>
-            </div>
-          )}
-
-          {/* Fields Section */}
-          {fieldsPreview && (
-            <div>
-              <h3 className="text-sm font-medium mb-2">Fields</h3>
-              <div className="rounded-lg border bg-card">
-                {fieldsPreview.preview.map((field) => (
-                  <FieldRow key={field.name} field={field} />
-                ))}
-                {fieldsPreview.remaining > 0 && (
-                  <Dialog>
-                    <DialogTrigger className="text-sm text-primary p-2 bg-muted/50 w-full">
-                      + {fieldsPreview.remaining} more fields...
-                    </DialogTrigger>
-                    <StructDetailsContent
-                      struct={struct}
-                      pkg={pkg}
-                      modName={modName}
-                    />
-                  </Dialog>
+    <Dialog open={isMainDialogOpen} onOpenChange={handleDialogOpenChange}>
+      <DialogTrigger asChild>
+        <Card
+          className="hover:shadow-md transition-shadow scroll-mt-20 cursor-pointer"
+          id={`${modName}-${struct.name}`}
+        >
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center mb-1">
+                  <Cuboid size={24} />
+                  <h3 className="font-mono text-lg font-medium hover:text-primary break-words ml-2">
+                    {" "}
+                    {struct.name}
+                  </h3>
+                </div>
+                {struct.deprecated && (
+                  <Badge variant="destructive" className="text-xs">
+                    Deprecated
+                  </Badge>
                 )}
               </div>
-            </div>
-          )}
-
-          {/* Methods Section */}
-          {struct.functions && struct.functions.length > 0 && (
-            <div>
-              <h3 className="text-sm font-medium mb-2">Methods</h3>
-              <div className="rounded-lg border bg-card divide-y">
-                {struct.functions.map((func) => (
-                  <div key={func.name} className="p-2">
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-sm text-primary">
-                        {func.name}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Quick Stats */}
-          <div className="flex flex-wrap gap-3 text-sm">
-            {struct.parameters && struct.parameters.length > 0 && (
-              <Dialog>
-                <DialogTrigger>
-                  <Badge variant="outline">
-                    {struct.parameters.length} Parameters
-                  </Badge>
-                </DialogTrigger>
-                <StructDetailsContent
-                  struct={struct}
-                  pkg={pkg}
-                  modName={modName}
-                />
-              </Dialog>
+            </CardTitle>
+            {struct.summary && (
+              <p className="text-sm text-muted-foreground">{struct.summary}</p>
             )}
-            {struct.aliases && struct.aliases.length > 0 && (
-              <Dialog>
-                <DialogTrigger>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {/* Quick Info Section */}
+              {struct.parentTraits && struct.parentTraits.length > 0 && (
+                <div className="text-sm text-muted-foreground">
+                  <span className="font-medium">Implements:</span>{" "}
+                  <span className="text-primary">
+                    {struct.parentTraits.join(", ")}
+                  </span>
+                </div>
+              )}
+
+              {/* Fields Section */}
+              {fieldsPreview && (
+                <div>
+                  <h3 className="text-sm font-medium mb-2">Fields</h3>
+                  <div className="rounded-lg border bg-card max-w-lg overflow-x-auto">
+                    {fieldsPreview.preview.map((field) => (
+                      <div
+                        key={field.name}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsMainDialogOpen(true);
+                        }}
+                      >
+                        <FieldRow field={field} />
+                      </div>
+                    ))}
+                    {fieldsPreview.remaining > 0 && (
+                      <div className="text-sm text-primary p-2 bg-muted/50 w-full">
+                        + {fieldsPreview.remaining} more fields...
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Methods Section */}
+              {struct.functions && struct.functions.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-medium mb-2">Methods</h3>
+                  <div className="flex rounded-lg border bg-card divide-y flex-wrap">
+                    {struct.functions.map((func) => (
+                      <div
+                        key={func.name}
+                        className="p-2 hover:bg-muted/50"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedFunction(func);
+                          setIsMainDialogOpen(true);
+                        }}
+                      >
+                        <span className="font-mono text-sm text-primary">
+                          {func.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Quick Stats */}
+              <div className="flex flex-wrap gap-3 text-sm">
+                {struct.parameters && struct.parameters.length > 0 && (
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsMainDialogOpen(true);
+                    }}
+                  >
+                    <Badge variant="outline">
+                      {struct.parameters.length} Parameters
+                    </Badge>
+                  </div>
+                )}
+                {struct.aliases && struct.aliases.length > 0 && (
                   <Badge variant="outline">
                     {struct.aliases.length} Aliases
                   </Badge>
-                </DialogTrigger>
-                <StructDetailsContent
-                  struct={struct}
-                  pkg={pkg}
-                  modName={modName}
-                />
-              </Dialog>
-            )}
-            {struct.constraints && struct.constraints.length > 0 && (
-              <Dialog>
-                <DialogTrigger>
+                )}
+                {struct.constraints && struct.constraints.length > 0 && (
                   <Badge variant="outline">Has Constraints</Badge>
-                </DialogTrigger>
-                <StructDetailsContent
-                  struct={struct}
-                  pkg={pkg}
-                  modName={modName}
-                />
-              </Dialog>
-            )}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </DialogTrigger>
+      <DialogContent className="max-w-[90vw] sm:max-w-3xl max-h-[80vh] overflow-y-auto">
+        <StructDetailsContent
+          struct={struct}
+          pkg={pkg}
+          modName={modName}
+          selectedFunction={selectedFunction}
+          onClose={() => setSelectedFunction(null)}
+        />
+      </DialogContent>
+    </Dialog>
   );
 }
 
-const StructDetailsContent = ({ struct, pkg, modName }: StructCardProps) => {
+const StructDetailsContent = ({
+  struct,
+  defaultTab = "fields",
+  selectedFunction,
+  onClose,
+}: StructCardProps & {
+  defaultTab?: string;
+  selectedFunction: Function | null;
+  onClose: () => void;
+}) => {
+  const [activeTab, setActiveTab] = useState(
+    selectedFunction ? "functions" : defaultTab,
+  );
+
+  useEffect(() => {
+    if (selectedFunction) {
+      setActiveTab("functions");
+      // Wait for DOM update before scrolling
+      setTimeout(() => {
+        const functionElement = document.getElementById(
+          `function-${selectedFunction.name}`,
+        );
+        if (functionElement) {
+          functionElement.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    } else {
+      setActiveTab(defaultTab);
+    }
+  }, [selectedFunction, defaultTab]);
+
   return (
     <>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
@@ -215,7 +256,11 @@ const StructDetailsContent = ({ struct, pkg, modName }: StructCardProps) => {
             </div>
           )}
 
-          <Tabs defaultValue="fields" className="w-full">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="w-full"
+          >
             <TabsList>
               {struct.fields && struct.fields.length > 0 && (
                 <TabsTrigger value="fields">Fields</TabsTrigger>
@@ -262,14 +307,36 @@ const StructDetailsContent = ({ struct, pkg, modName }: StructCardProps) => {
 
             {struct.functions && (
               <TabsContent value="functions">
-                <Accordion type="single" collapsible className="w-full">
+                <Accordion
+                  type="single"
+                  collapsible
+                  className="w-full"
+                  defaultValue={
+                    selectedFunction
+                      ? `function-${selectedFunction.name}`
+                      : undefined
+                  }
+                >
                   {struct.functions.map((func, index) => (
-                    <AccordionItem key={func.name} value={`function-${index}`}>
-                      <AccordionTrigger className="text-sm">
+                    <AccordionItem
+                      key={func.name}
+                      value={`function-${func.name}`}
+                      id={`function-${func.name}`}
+                    >
+                      <AccordionTrigger
+                        className={cn(
+                          "text-sm",
+                          selectedFunction?.name === func.name &&
+                            "text-primary",
+                        )}
+                      >
                         {func.name}
                       </AccordionTrigger>
                       <AccordionContent>
-                        <FunctionCard func={func} pkg={pkg} modName={modName} />
+                        <FunctionView
+                          name={func.name}
+                          overloads={func.overloads}
+                        />
                       </AccordionContent>
                     </AccordionItem>
                   ))}

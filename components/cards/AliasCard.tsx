@@ -16,33 +16,34 @@ export default function AliasCard({ alias, pkg, modName }: AliasCardProps) {
   return (
     <Card className="w-full" key={name} id={`${modName}-${name}`}>
       <CardHeader>
-        <CardTitle>
-          <Link
-            href={`/docs/packages/${pkg}/modules/${modName}#${name}`}
-            className="font-mono text-lg font-medium hover:text-primary break-words"
-          >
-            {name}
-          </Link>
-        </CardTitle>
+        <div className="flex justify-between items-center">
+          <CardTitle>
+            <Link
+              href={`/docs/packages/${pkg}/modules/${modName}#${name}`}
+              className="font-mono text-lg font-medium hover:text-primary break-words"
+            >
+              {name}
+            </Link>
+          </CardTitle>
+          <div>
+            <pre className="bg-muted p-2 rounded mt-1 text-sm max-w-lg whitespace-pre-wrap">
+              <code className="break-words whitespace-pre-wrap">{value}</code>
+            </pre>
+          </div>
+        </div>
         {deprecated && (
           <p className="text-sm text-red-500">
             <strong>Deprecated: </strong>
             {deprecated}
           </p>
         )}
-        {summary && <p className="text-sm text-muted-foreground">{summary}</p>}
+        {summary && (
+          <p className="text-sm text-muted-foreground break-words">{summary}</p>
+        )}
         {description && (
           <p className="text-sm text-muted-foreground">{description}</p>
         )}
       </CardHeader>
-      <CardContent className="space-y-2">
-        <div>
-          <strong className="text-sm">Value:</strong>
-          <pre className="bg-muted p-2 rounded mt-1 text-sm overflow-x-auto">
-            <code>{value}</code>
-          </pre>
-        </div>
-      </CardContent>
     </Card>
   );
 }

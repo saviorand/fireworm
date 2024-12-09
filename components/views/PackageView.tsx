@@ -2,9 +2,9 @@ import React from "react";
 import { Package, collectModuleItems } from "@/lib/docs";
 import LayoutWithSidebar from "@/components/navigation/LayoutWithSidebar";
 import Link from "next/link";
-import FunctionCard from "../cards/FunctionCard";
 import StructCard from "../cards/StructCard";
 import AliasCard from "../cards/AliasCard";
+import FunctionDoc from "../cards/FunctionCard";
 
 function PackageView(pkg: Package, crumbs: React.ReactNode) {
   const moduleItems = new Map(
@@ -68,9 +68,9 @@ function PackageView(pkg: Package, crumbs: React.ReactNode) {
                           <h4 className="text-lg font-semibold mb-4">
                             Functions
                           </h4>
-                          <div className="grid grid-cols-1 [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))] gap-4">
+                          <div className="grid grid-cols-1 ">
                             {items.functions.map((fn) => (
-                              <FunctionCard
+                              <FunctionDoc
                                 key={fn.name}
                                 func={fn}
                                 pkg={pkg.name}

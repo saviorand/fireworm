@@ -1,15 +1,10 @@
 "use client";
 
-import { Function } from "@/lib/docs";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Function, Overload } from "@/lib/docs";
+import { Badge } from "../ui/badge";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "../ui/accordion";
-import Link from "next/link";
+import FunctionView from "../views/FunctionView";
+import { SquareFunction } from "lucide-react";
 
 interface FunctionCardProps {
   func: Function;
@@ -17,121 +12,78 @@ interface FunctionCardProps {
   modName: string;
 }
 
-export default function FunctionCard({
-  func,
-  pkg,
-  modName,
-}: FunctionCardProps) {
+export default function FunctionDoc({ func, pkg, modName }: FunctionCardProps) {
   const { name, overloads } = func;
+  const mainOverload = overloads?.[0];
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <Link
-            href={`/docs/packages/${pkg}/modules/${modName}#${name}`}
-            className="font-mono text-lg font-medium hover:text-primary break-words"
-          >
-            {name}
-          </Link>
-          <Dialog>
-            <DialogTrigger className="text-sm text-muted-foreground hover:text-primary">
-              View Details
-            </DialogTrigger>
-            <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
-              <div className="py-4">
-                <h3 className="text-xl font-bold mb-4">{name}</h3>
-                <Accordion type="single" collapsible className="w-full">
-                  {overloads?.map((overload, index) => (
-                    <AccordionItem
-                      key={`${name}-${index}`}
-                      value={`overload-${index}`}
-                    >
-                      <AccordionTrigger className="text-sm">
-                        Overload {index + 1}: {overload.signature}
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <div className="space-y-3 text-sm">
-                          {overload.summary && (
-                            <div>
-                              <strong>Summary:</strong>
-                              <p className="mt-1">{overload.summary}</p>
-                            </div>
-                          )}
-
-                          {overload.description && (
-                            <div>
-                              <strong>Description:</strong>
-                              <p className="mt-1">{overload.description}</p>
-                            </div>
-                          )}
-
-                          {overload.args && overload.args.length > 0 && (
-                            <div>
-                              <strong>Arguments:</strong>
-                              <ul className="mt-1 list-disc pl-4">
-                                {overload.args.map((arg) => (
-                                  <li key={arg.name}>
-                                    <code>{arg.name}</code>: {arg.type}
-                                    {arg.description && ` - ${arg.description}`}
-                                    {arg.convention && ` (${arg.convention})`}
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-
-                          {overload.returnType && (
-                            <div>
-                              <strong>Return Type:</strong>
-                              <p className="mt-1">
-                                <code>{overload.returnType}</code>
-                              </p>
-                            </div>
-                          )}
-
-                          {overload.returnsDoc && (
-                            <div>
-                              <strong>Returns:</strong>
-                              <p className="mt-1">{overload.returnsDoc}</p>
-                            </div>
-                          )}
-
-                          {overload.deprecated && (
-                            <div className="text-red-500">
-                              <strong>Deprecated:</strong>
-                              <p className="mt-1">{overload.deprecated}</p>
-                            </div>
-                          )}
-
-                          {overload.raises && (
-                            <div>
-                              <strong>Raises:</strong>
-                              <p className="mt-1">
-                                {overload.raisesDoc || "Can raise exceptions"}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
+    <Dialog>
+      <DialogTrigger className="w-full border rounded-lg p-3 sm:p-4 hover:border-primary/50 transition-colors">
+        <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+          <div className="flex flex-col items-start">
+            <div className="flex items-center mb-1">
+              <SquareFunction size={24} />
+              <h3 className="text-lg font-mono ml-2">{name}</h3>
+            </div>
+            <div className="font-mono mt-2 text-sm text-muted-foreground overflow-x-auto scrollbar-none">
+              <div className="flex flex-col md:flex-row md:items-center flex-wrap">
+                <div className="flex flex-wrap items-center gap-1">
+                  {mainOverload?.args?.map((arg, index, array) => (
+                    <span key={arg.name} className="break-words text-left">
+                      <span className="text-primary">{arg.name}</span>
+                      <span className="text-muted-foreground mx-1">:</span>
+                      <span className="text-foreground break-words">
+                        {arg.type}
+                      </span>
+                      {index < array.length - 1 && (
+                        <span className="text-muted-foreground mr-1">,</span>
+                      )}
+                    </span>
                   ))}
-                </Accordion>
+                </div>
+                <span className="mx-2">{"->"}</span>
+                <span className="text-foreground break-all">
+                  {mainOverload?.returnType}
+                </span>
               </div>
-            </DialogContent>
-          </Dialog>
-        </CardTitle>
-        {overloads?.[0]?.summary && (
-          <p className="text-sm text-muted-foreground">
-            {overloads[0].summary}
-          </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            {" "}
+            {mainOverload?.deprecated && (
+              <Badge variant="destructive">Deprecated</Badge>
+            )}
+          </div>
+        </div>
+
+        {(mainOverload?.args?.some((arg) => arg.description) ||
+          mainOverload?.returnsDoc) && (
+          <div className="mt-3 text-xs text-muted-foreground font-sans border-t pt-2">
+            {mainOverload?.args?.map(
+              (arg) =>
+                arg.description && (
+                  <div key={arg.name} className="flex gap-2 flex-wrap">
+                    {" "}
+                    <span className="font-mono text-primary whitespace-nowrap">
+                      {arg.name}:
+                    </span>
+                    <span className="break-words">{arg.description}</span>
+                  </div>
+                ),
+            )}
+            {mainOverload?.returnsDoc && (
+              <div className="flex gap-2 flex-wrap">
+                {" "}
+                <span className="font-mono whitespace-nowrap">returns:</span>
+                <span className="break-words">{mainOverload.returnsDoc}</span>
+              </div>
+            )}
+          </div>
         )}
-      </CardHeader>
-      <CardContent>
-        <pre className="bg-muted p-2 rounded text-sm overflow-x-auto">
-          <code>{overloads?.[0]?.signature}</code>
-        </pre>
-      </CardContent>
-    </Card>
+      </DialogTrigger>
+      <DialogContent className="max-w-[90vw] sm:max-w-3xl max-h-[80vh] overflow-y-auto">
+        <FunctionView name={name} overloads={overloads} />
+      </DialogContent>
+    </Dialog>
   );
 }

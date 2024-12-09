@@ -10,6 +10,7 @@ import {
 } from "@/lib/docs";
 import { SidebarLayout } from "@/components/navigation/Sidebar/SidebarLayout";
 import { SidebarSection } from "./SidebarLayout";
+import { ArrowLeft } from "lucide-react";
 
 type SidebarProps = {
   pkg: Package;
@@ -17,69 +18,37 @@ type SidebarProps = {
 };
 
 function Sidebar({ pkg, activeModule }: SidebarProps) {
-  if (activeModule) {
-    // Module view - show module sections
-    const sections = createSidebarSections(activeModule, pkg.name);
-
-    return (
-      <SidebarLayout>
-        <div className="mb-6">
-          <h2 className="text-lg font-bold mb-2">Index</h2>
-          <div className="pl-4">
-            <Link
-              href={`/docs/packages/${pkg.name}`}
-              className="block py-1 hover:text-primary"
-            >
-              ← Back to package
-            </Link>
-            <Link href="#overview" className="block py-1 hover:text-primary">
-              Overview
-            </Link>
-            {sections.map(
-              (section) =>
-                section.items.length > 0 && (
-                  <Link
-                    key={section.title}
-                    href={`#${section.title.toLowerCase()}`}
-                    className="block py-1 hover:text-primary"
-                  >
-                    {section.title}
-                  </Link>
-                ),
-            )}
-          </div>
-        </div>
-        {sections.map(
-          (section) =>
-            section.items.length > 0 && (
-              <SidebarSection
-                key={section.title}
-                title={section.title}
-                items={section.items}
-              />
-            ),
-        )}
-      </SidebarLayout>
-    );
-  }
-
-  // Package view - show modules with their sections
   const moduleItems = new Map(
     pkg.modules?.map((mod) => [mod.name, collectModuleItems(mod)]) ?? [],
   );
+  const packagePath = `/docs/packages/${pkg.name}`;
 
   return (
     <SidebarLayout>
       <div className="mb-6">
         <h2 className="text-lg font-bold mb-2">Index</h2>
         <div className="pl-4">
-          <Link href="#overview" className="block py-1 hover:text-primary">
-            Overview
+          <Link
+            href={activeModule ? `${packagePath}#overview` : "#overview"}
+            className="block py-1 hover:text-primary"
+          >
+            {activeModule ? (
+              <>
+                <ArrowLeft size={16} className="inline-block -mt-1 mr-1" />
+                <span>{pkg.name} Package</span>
+              </>
+            ) : (
+              <span>Overview</span>
+            )}
           </Link>
           {pkg.modules?.map((module) => (
             <Link
               key={module.name}
-              href={`#${module.name}`}
+              href={
+                activeModule
+                  ? `${packagePath}#${module.name}`
+                  : `#${module.name}`
+              }
               className="block py-1 hover:text-primary"
             >
               {module.name}
