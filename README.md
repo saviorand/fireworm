@@ -24,6 +24,7 @@
 FireWorm lets you make a documentation website for your Mojo project.
 
 Just run the `mojo doc` command on your codebase, add the resulting JSON to the project and start the server. You've got your public docs! 🔥
+Update the `docs.config.json` file with the description for your project and a link to your Github repo to fetch the README for the home page (custom docs pages coming soon!).
 
 <!-- GETTING STARTED -->
 
