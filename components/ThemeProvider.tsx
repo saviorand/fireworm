@@ -8,5 +8,6 @@ export function ThemeProvider({
   children,
   ...props
 }: ThemeProviderProps): JSX.Element {
+  // @ts-ignore
   return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
 }
