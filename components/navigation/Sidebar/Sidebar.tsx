@@ -84,7 +84,7 @@ function Sidebar({ pkg, activeModule }: SidebarProps) {
                       >
                         <Link
                           href={`#${module.name}-${fn.name}`}
-                          className="hover:text-primary"
+                          className="hover:text-primary break-words truncate"
                         >
                           {fn.name}
                         </Link>
@@ -106,7 +106,7 @@ function Sidebar({ pkg, activeModule }: SidebarProps) {
                       >
                         <Link
                           href={`#${module.name}-${type.name}`}
-                          className="hover:text-primary"
+                          className="hover:text-primary break-words truncate"
                         >
                           {type.name}
                         </Link>
@@ -122,13 +122,17 @@ function Sidebar({ pkg, activeModule }: SidebarProps) {
                 <div>
                   <ul className="pl-4 space-y-1">
                     {items.constants.map((constant: Alias) => (
-                      <li key={constant.name} className="text-sm">
+                      <li
+                        key={constant.name}
+                        className="text-sm flex justify-between pr-4"
+                      >
                         <Link
                           href={`#${module.name}-${constant.name}`}
-                          className="hover:text-primary"
+                          className="hover:text-primary break-words truncate"
                         >
                           {constant.name}
                         </Link>
+                        <span className="text-muted-foreground">Constant</span>
                       </li>
                     ))}
                   </ul>
@@ -138,18 +142,19 @@ function Sidebar({ pkg, activeModule }: SidebarProps) {
               {/* Variables */}
               {items.variables.length > 0 && (
                 <div>
-                  <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                    Variables
-                  </h4>
                   <ul className="pl-4 space-y-1">
                     {items.variables.map((variable) => (
-                      <li key={variable.name} className="text-sm">
+                      <li
+                        key={variable.name}
+                        className="text-sm flex justify-between pr-4"
+                      >
                         <Link
                           href={`#${module.name}-${variable.name}`}
-                          className="hover:text-primary"
+                          className="hover:text-primary break-words truncate"
                         >
                           {variable.name}
                         </Link>
+                        <span className="text-muted-foreground">Variable</span>
                       </li>
                     ))}
                   </ul>

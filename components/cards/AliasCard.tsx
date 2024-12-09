@@ -3,6 +3,7 @@
 import { Alias } from "@/lib/docs";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import Link from "next/link";
+import { AArrowDown } from "lucide-react";
 
 interface AliasCardProps {
   alias: Alias;
@@ -22,7 +23,12 @@ export default function AliasCard({ alias, pkg, modName }: AliasCardProps) {
               href={`/docs/packages/${pkg}/modules/${modName}#${name}`}
               className="font-mono text-lg font-medium hover:text-primary break-words"
             >
-              {name}
+              <div className="flex items-center mb-1">
+                <AArrowDown size={24} />
+                <h3 className="font-mono text-lg font-medium hover:text-primary break-words ml-2">
+                  {name}
+                </h3>
+              </div>
             </Link>
           </CardTitle>
           <div>

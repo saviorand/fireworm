@@ -138,11 +138,16 @@ export type AliasWithModule = Alias & {
   module: string;
 };
 
+export type TraitWithModule = Trait & {
+  module: string;
+};
+
 export type ModuleItems = {
   functions: FunctionWithModule[];
   types: StructWithModule[];
   constants: AliasWithModule[];
   variables: AliasWithModule[];
+  traits: TraitWithModule[];
 };
 
 export function isModule(item: Package | Module): item is Module {
@@ -247,6 +252,7 @@ export const collectModuleItems = (module: Module): ModuleItems => {
     types: [],
     constants: [],
     variables: [],
+    traits: [],
   };
 
   module.functions?.forEach((fn) =>
@@ -262,6 +268,9 @@ export const collectModuleItems = (module: Module): ModuleItems => {
       items.variables.push({ ...alias, module: module.name });
     }
   });
+  module.traits?.forEach((trait) =>
+    items.traits.push({ ...trait, module: module.name }),
+  );
 
   return items;
 };
@@ -293,6 +302,7 @@ export function collectAllItems(packages: any[]) {
           variables: any[];
           functions: any[];
           types: any[];
+          traits: any[];
           description: string;
         }
       >;
@@ -306,6 +316,7 @@ export function collectAllItems(packages: any[]) {
       variables: [] as any[],
       functions: [] as any[],
       types: [] as any[],
+      traits: [] as any[],
       description: pkg.description || "",
       moduleItems: new Map() as
         | Map<
@@ -315,6 +326,7 @@ export function collectAllItems(packages: any[]) {
               variables: any[];
               functions: any[];
               types: any[];
+              traits: any[];
               description: string;
             }
           >
@@ -354,6 +366,14 @@ export function collectAllItems(packages: any[]) {
       }
     });
 
+    pkg.traits?.forEach((trait: any) => {
+      items.traits.push({
+        name: trait.name,
+        type: "trait",
+        description: trait.description || "",
+      });
+    });
+
     // Handle module items
     pkg.modules?.forEach((module: any) => {
       const moduleItems = {
@@ -361,6 +381,7 @@ export function collectAllItems(packages: any[]) {
         variables: [] as any[],
         functions: [] as any[],
         types: [] as any[],
+        traits: [] as any[],
         description: module.description || "",
       };
 
@@ -400,12 +421,22 @@ export function collectAllItems(packages: any[]) {
         }
       });
 
+      module.traits?.forEach((trait: any) => {
+        moduleItems.traits.push({
+          name: trait.name,
+          module: module.name,
+          type: "trait",
+          description: trait.description || "",
+        });
+      });
+
       // Only add module if it has any items
       if (
         moduleItems.functions.length > 0 ||
         moduleItems.types.length > 0 ||
         moduleItems.constants.length > 0 ||
-        moduleItems.variables.length > 0
+        moduleItems.variables.length > 0 ||
+        moduleItems.traits.length > 0
       ) {
         items.moduleItems?.set(module.name, moduleItems);
       }

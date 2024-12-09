@@ -5,6 +5,7 @@ import Link from "next/link";
 import StructCard from "../cards/StructCard";
 import AliasCard from "../cards/AliasCard";
 import FunctionDoc from "../cards/FunctionCard";
+import TraitCard from "../cards/TraitCard";
 
 function PackageView(pkg: Package, crumbs: React.ReactNode) {
   const moduleItems = new Map(
@@ -137,6 +138,23 @@ function PackageView(pkg: Package, crumbs: React.ReactNode) {
                             {items.variables.map((variable) => (
                               <AliasCard
                                 alias={variable}
+                                pkg={pkg.name}
+                                modName={modName}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Traits */}
+                      {items.traits.length > 0 && (
+                        <div className="mb-6">
+                          <h4 className="text-lg font-semibold mb-4">Traits</h4>
+                          <div className="grid gap-4">
+                            {items.traits.map((trait) => (
+                              <TraitCard
+                                key={trait.name}
+                                trait={trait}
                                 pkg={pkg.name}
                                 modName={modName}
                               />
