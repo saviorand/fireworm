@@ -7,7 +7,6 @@ on:
     - cron: '0 0 * * *'  # Daily at midnight UTC
   workflow_dispatch:
 
-
 jobs:
   fetch-readme:
     runs-on: ubuntu-latest

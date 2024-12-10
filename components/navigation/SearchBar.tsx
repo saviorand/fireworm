@@ -107,9 +107,7 @@ export default function SearchBar() {
               <CommandItem
                 key={mod.path}
                 onSelect={() =>
-                  runCommand(() =>
-                    router.push("/docs/modules/" + mod.path.replace(/^#/, "")),
-                  )
+                  runCommand(() => router.push("/docs/" + mod.path))
                 }
                 className="capitalize !pointer-events-auto !opacity-80 !cursor-pointer"
               >

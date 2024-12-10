@@ -3,7 +3,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-    <img src="public/logo.png" alt="Logo" width="250" height="250">
+    <img src="public/fireworm.png" alt="Logo" width="250" height="250">
 
   <h3 align="center">FireWorm</h3>
 

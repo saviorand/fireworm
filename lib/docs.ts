@@ -201,7 +201,14 @@ export function getAllModules(): IndexedModule[] {
   function walk(pkg: Package, path: string) {
     if (pkg.modules) {
       pkg.modules.forEach((m) => {
-        modules.push({ module: m, path: `${path}#${m.name}` });
+        let packagePath =
+          pkg.name == Docs.decl.name
+            ? "/packages/default"
+            : `/packages/${pkg.name}`;
+        modules.push({
+          module: m,
+          path: `${packagePath}/modules/${m.name}`,
+        });
       });
     }
 
