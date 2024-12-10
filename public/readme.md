@@ -3,7 +3,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-    <img src="static/lightbug-logo.png" alt="Logo" width="250" height="250">
+    <img src="static/logo.png" alt="Logo" width="250" height="250">
 
   <h3 align="center">Lightbug</h3>
 
@@ -11,31 +11,31 @@
     🐝 A Mojo HTTP framework with wings 🔥
     <br/>
 
-![Written in Mojo][language-shield]
-[![MIT License][license-shield]][license-url]
-![Build status][build-shield]
-<br/>
-[![Join our Discord][discord-shield]][discord-url]
-[![Contributors Welcome][contributors-shield]][contributors-url]
+   ![Written in Mojo][language-shield]
+   [![MIT License][license-shield]][license-url]
+   ![Build status][build-shield]
+   <br/>
+   [![Join our Discord][discord-shield]][discord-url]
+   [![Contributors Welcome][contributors-shield]][contributors-url]
+   
 
   </p>
 </div>
 
 ## Overview
 
-Lightbug is a simple and sweet HTTP framework for Mojo that builds on best practice from systems programming, such as the Golang [FastHTTP](https://github.com/valyala/fasthttp/) and Rust [may_minihttp](https://github.com/Xudong-Huang/may_minihttp/).
+Lightbug is a simple and sweet HTTP framework for Mojo that builds on best practice from systems programming, such as the Golang [FastHTTP](https://github.com/valyala/fasthttp/) and Rust [may_minihttp](https://github.com/Xudong-Huang/may_minihttp/). 
 
 This is not production ready yet. We're aiming to keep up with new developments in Mojo, but it might take some time to get to a point when this is safe to use in real-world applications.
 
 Lightbug currently has the following features:
+ - [x] Pure Mojo networking! No dependencies on Python by default
+ - [x] TCP-based server and client implementation
+ - [x] Assign your own custom handler to a route
+ - [x] Craft HTTP requests and responses with built-in primitives
+ - [x] Everything is fully typed, with no `def` functions used
 
-- [x] Pure Mojo networking! No dependencies on Python by default
-- [x] TCP-based server and client implementation
-- [x] Assign your own custom handler to a route
-- [x] Craft HTTP requests and responses with built-in primitives
-- [x] Everything is fully typed, with no `def` functions used
-
-### Check Out These Mojo Libraries:
+ ### Check Out These Mojo Libraries:
 
 - Logging - [@toasty/stump](https://github.com/thatstoasty/stump)
 - CLI and Terminal - [@toasty/prism](https://github.com/thatstoasty/prism), [@toasty/mog](https://github.com/thatstoasty/mog)
@@ -44,10 +44,9 @@ Lightbug currently has the following features:
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- GETTING STARTED -->
-
 ## Getting Started
 
-The only hard dependency for `lightbug_http` is Mojo.
+The only hard dependency for `lightbug_http` is Mojo. 
 Learn how to get up and running with Mojo on the [Modular website](https://www.modular.com/max/mojo).
 Once you have a Mojo project set up locally,
 
@@ -68,24 +67,24 @@ Once you have a Mojo project set up locally,
 3. Run `magic install` at the root of your project, where `mojoproject.toml` is located
 4. Lightbug should now be installed as a dependency. You can import all the default imports at once, e.g:
 
-   ```mojo
-   from lightbug_http import *
-   ```
+    ```mojo
+    from lightbug_http import *
+    ```
 
-   or import individual structs and functions, e.g.
+    or import individual structs and functions, e.g. 
 
-   ```mojo
-   from lightbug_http.service import HTTPService
-   from lightbug_http.http import HTTPRequest, HTTPResponse, OK, NotFound
-   ```
+    ```mojo
+    from lightbug_http.service import HTTPService
+    from lightbug_http.http import HTTPRequest, HTTPResponse, OK, NotFound
+    ```
 
-   there are some default handlers you can play with:
+    there are some default handlers you can play with:
 
-   ```mojo
-   from lightbug_http.service import Printer # prints request details to console
-   from lightbug_http.service import Welcome # serves an HTML file with an image (currently requires manually adding files to static folder, details below)
-   from lightbug_http.service import ExampleRouter # serves /, /first, /second, and /echo routes
-   ```
+    ```mojo
+    from lightbug_http.service import Printer # prints request details to console
+    from lightbug_http.service import Welcome # serves an HTML file with an image (currently requires manually adding files to static folder, details below)
+    from lightbug_http.service import ExampleRouter # serves /, /first, /second, and /echo routes
+    ```
 
 5. Add your handler in `lightbug.🔥` by passing a struct that satisfies the following trait:
 
@@ -121,20 +120,21 @@ Once you have a Mojo project set up locally,
 
 6. Start a server listening on a port with your service like so.
 
-   ```mojo
-   from lightbug_http import Welcome, Server
+    ```mojo
+    from lightbug_http import Welcome, Server
 
-   fn main() raises:
-       var server = Server()
-       var handler = Welcome()
-       server.listen_and_serve("0.0.0.0:8080", handler)
-   ```
+    fn main() raises:
+        var server = Server()
+        var handler = Welcome()
+        server.listen_and_serve("0.0.0.0:8080", handler)
+    ```
 
 Feel free to change the settings in `listen_and_serve()` to serve on a particular host and port.
 
 Now send a request `0.0.0.0:8080`. You should see some details about the request printed out to the console.
 
 Congrats 🥳 You're using Lightbug!
+
 
 Routing is not in scope for this library, but you can easily set up routes yourself:
 
@@ -160,6 +160,7 @@ struct ExampleRouter(HTTPService):
 ```
 
 We plan to add more advanced routing functionality in a future library called `lightbug_api`, see [Roadmap](#roadmap) for more details.
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -243,7 +244,6 @@ You can then use all the regular server commands in the same way as with the def
 Note: as of September, 2024, `PythonServer` and `PythonClient` throw a compilation error when starting. There's an open [issue](https://github.com/saviorand/lightbug_http/issues/41) to fix this - contributions welcome!
 
 <!-- ROADMAP -->
-
 ## Roadmap
 
 <div align="center">
@@ -252,32 +252,33 @@ Note: as of September, 2024, `PythonServer` and `PythonClient` throw a compilati
 
 We're working on support for the following (contributors welcome!):
 
-- [ ] [WebSocket Support](https://github.com/saviorand/lightbug_http/pull/57)
-- [ ] [SSL/HTTPS support](https://github.com/saviorand/lightbug_http/issues/20)
-- [ ] UDP support
-- [ ] [Better error handling](https://github.com/saviorand/lightbug_http/issues/3), [improved form/multipart and JSON support](https://github.com/saviorand/lightbug_http/issues/4)
-- [ ] [Multiple simultaneous connections](https://github.com/saviorand/lightbug_http/issues/5), [parallelization and performance optimizations](https://github.com/saviorand/lightbug_http/issues/6)
-- [ ] [HTTP 2.0/3.0 support](https://github.com/saviorand/lightbug_http/issues/8)
-- [ ] [ASGI spec conformance](https://github.com/saviorand/lightbug_http/issues/17)
+-  [ ] [WebSocket Support](https://github.com/saviorand/lightbug_http/pull/57)
+ - [ ] [SSL/HTTPS support](https://github.com/saviorand/lightbug_http/issues/20)
+ - [ ] UDP support
+ - [ ] [Better error handling](https://github.com/saviorand/lightbug_http/issues/3), [improved form/multipart and JSON support](https://github.com/saviorand/lightbug_http/issues/4)
+ - [ ] [Multiple simultaneous connections](https://github.com/saviorand/lightbug_http/issues/5), [parallelization and performance optimizations](https://github.com/saviorand/lightbug_http/issues/6)
+ - [ ] [HTTP 2.0/3.0 support](https://github.com/saviorand/lightbug_http/issues/8)
+ - [ ] [ASGI spec conformance](https://github.com/saviorand/lightbug_http/issues/17)
 
 The plan is to get to a feature set similar to Python frameworks like [Starlette](https://github.com/encode/starlette), but with better performance.
 
-Our vision is to develop three libraries, with `lightbug_http` (this repo) as a starting point:
+Our vision is to develop three libraries, with `lightbug_http` (this repo) as a starting point: 
+ - `lightbug_http` - HTTP infrastructure and basic API development
+ - `lightbug_api` - (coming later in 2024!) Tools to make great APIs fast, with support for OpenAPI spec and domain driven design
+ - `lightbug_web` - (release date TBD) Full-stack web framework for Mojo, similar to NextJS or SvelteKit
 
-- `lightbug_http` - HTTP infrastructure and basic API development
-- `lightbug_api` - (coming later in 2024!) Tools to make great APIs fast, with support for OpenAPI spec and domain driven design
-- `lightbug_web` - (release date TBD) Full-stack web framework for Mojo, similar to NextJS or SvelteKit
-
-The idea is to get to a point where the entire codebase of a simple modern web application can be written in Mojo.
+The idea is to get to a point where the entire codebase of a simple modern web application can be written in Mojo. 
 
 We don't make any promises, though -- this is just a vision, and whether we get there or not depends on many factors, including the support of the community.
+
 
 See the [open issues](https://github.com/saviorand/lightbug_http/issues) and submit your own to help drive the development of Lightbug.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- CONTRIBUTING -->
 
+
+<!-- CONTRIBUTING -->
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**. See [CONTRIBUTING.md](./CONTRIBUTING.md) for more details on how to contribute.
@@ -293,16 +294,18 @@ Don't forget to give the project a star!
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- LICENSE -->
 
+
+<!-- LICENSE -->
 ## License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- CONTACT -->
 
+
+<!-- CONTACT -->
 ## Contact
 
 [Valentin Erokhin](https://www.valentin.wiki/)
@@ -311,20 +314,21 @@ Project Link: [https://github.com/saviorand/mojo-web](https://github.com/saviora
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- ACKNOWLEDGMENTS -->
 
+
+<!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
 We were drawing a lot on the following projects:
 
-- [FastHTTP](https://github.com/valyala/fasthttp/) (Golang)
-- [may_minihttp](https://github.com/Xudong-Huang/may_minihttp/) (Rust)
-- [FireTCP](https://github.com/Jensen-holm/FireTCP) (One of the earliest Mojo TCP implementations!)
+* [FastHTTP](https://github.com/valyala/fasthttp/) (Golang)
+* [may_minihttp](https://github.com/Xudong-Huang/may_minihttp/) (Rust)
+* [FireTCP](https://github.com/Jensen-holm/FireTCP) (One of the earliest Mojo TCP implementations!)
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Contributors
-
 Want your name to show up here? See [CONTRIBUTING.md](./CONTRIBUTING.md)!
 
 <a href="https://github.com/saviorand/lightbug_http/graphs/contributors">
@@ -335,7 +339,6 @@ Want your name to show up here? See [CONTRIBUTING.md](./CONTRIBUTING.md)!
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-
 [build-shield]: https://img.shields.io/github/actions/workflow/status/saviorand/lightbug_http/.github%2Fworkflows%2Fpackage.yml
 [language-shield]: https://img.shields.io/badge/language-mojo-orange
 [license-shield]: https://img.shields.io/github/license/saviorand/lightbug_http?logo=github
